@@ -1,0 +1,11 @@
+// Cloudflare Pages settings for turk.demarioking.com (Pages project "turk", root directory = repo root).
+// The game page is static files in ./site. The multiplayer server lives in ./functions (Pages Functions, under /api/).
+{
+  "name": "turk",
+  "pages_build_output_dir": "./site",
+  "compatibility_date": "2026-06-01",
+  // Game rooms (a free Cloudflare D1 database). Tables are created automatically on first use.
+  "d1_databases": [
+    { "binding": "TURK_DB", "database_name": "turk-game", "database_id": "6d649567-b37b-4da2-8006-546793180b48" }
+  ]
+}

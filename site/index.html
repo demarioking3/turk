@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>TURK — DeMario King</title>
+  <meta name="description" content="TURK: a fast-paced multiplayer card game. Build runs, match cards, bluff your opponents, and get the lowest hand.">
+  <meta name="theme-color" content="#0b0908">
+  <meta property="og:title" content="TURK">
+  <meta property="og:description" content="Build runs, match cards, bluff your opponents, and get the lowest hand. 2–4 players.">
+  <meta property="og:image" content="https://turk.demarioking.com/images/turk-kings.jpg">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/turk.css">
+  <link rel="stylesheet" href="/css/turk-music.css">
+</head>
+<body>
+  <noscript><p class="noscript">TURK needs JavaScript turned on.</p></noscript>
+
+  <!-- ============ HOME: title, create, join ============ -->
+  <section class="screen screen--home" id="home" hidden>
+    <header class="hero">
+      <img class="hero__art" src="/images/turk-kings.jpg" srcset="/images/turk-kings-700.jpg 700w, /images/turk-kings.jpg 1400w"
+           sizes="100vw" alt="" width="1400" height="511">
+      <div class="hero__shade"></div>
+      <h1 class="logo">TURK</h1>
+      <p class="hero__tag"><span class="tag-long">Build runs · Match cards · Bluff · Lowest hand wins</span><span class="tag-short">Runs · Sets · Bluff · Lowest wins</span></p>
+    </header>
+
+    <div class="home-panel">
+      <div class="tabs" role="tablist" aria-label="Create or join">
+        <button class="tab" role="tab" id="tab-create" aria-controls="form-create" aria-selected="true">Create Game</button>
+        <button class="tab" role="tab" id="tab-join" aria-controls="form-join" aria-selected="false">Join Game</button>
+      </div>
+
+      <form class="form" id="form-create" role="tabpanel" aria-labelledby="tab-create" novalidate>
+        <label class="field">
+          <span class="field__label">Enter Your Name</span>
+          <input class="field__input" name="name" maxlength="20" autocomplete="nickname" spellcheck="false" required>
+          <span class="field__hint">Up to 20 characters. No account needed.</span>
+        </label>
+        <fieldset class="choice">
+          <legend class="field__label">Room</legend>
+          <label class="choice__opt"><input type="radio" name="visibility" value="private" checked><span>Private — invite with a code or link</span></label>
+          <label class="choice__opt"><input type="radio" name="visibility" value="public"><span>Public — anyone can join from the lobby list</span></label>
+        </fieldset>
+        <p class="form__error" role="alert"></p>
+        <button class="btn btn--gold btn--wide" type="submit">Create Game</button>
+      </form>
+
+      <form class="form" id="form-join" role="tabpanel" aria-labelledby="tab-join" hidden novalidate>
+        <label class="field">
+          <span class="field__label">Room Code</span>
+          <input class="field__input field__input--code" name="code" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Enter Your Name</span>
+          <input class="field__input" name="name" maxlength="20" autocomplete="nickname" spellcheck="false" required>
+          <span class="field__hint">Up to 20 characters. No account needed.</span>
+        </label>
+        <p class="form__error" role="alert"></p>
+        <button class="btn btn--gold btn--wide" type="submit">Join Game</button>
+      </form>
+
+      <section class="public-rooms" aria-labelledby="public-title">
+        <div class="public-rooms__head">
+          <h2 id="public-title">Public games</h2>
+          <button class="link-btn" type="button" id="refresh-rooms">Refresh</button>
+        </div>
+        <ul class="public-rooms__list" id="public-list"></ul>
+      </section>
+
+      <details class="how">
+        <summary>How to play</summary>
+        <ul>
+          <li>Everyone gets <b>5 cards</b>. On your turn, <b>draw</b> from the deck or take the top discard, then <b>discard</b> one card. You have <b>30 seconds</b>.</li>
+          <li><b>Spreads:</b> three or four of a kind, or 3+ cards in a row of the same suit (Ace is low: A‑2‑3). Laying them down is optional.</li>
+          <li>You can <b>add cards to anyone's spreads</b> on the table.</li>
+          <li>Card points: Ace 1, number cards face value, J/Q/K 10.</li>
+          <li>Empty your hand to win the round — or hit <b>DROP</b> if you think you hold the lowest points. Get caught (someone ties or beats you) and you take a 10‑point penalty.</li>
+          <li>Dealt exactly <b>21</b>? DROP on your first turn before drawing and win on the spot. Nobody will tell you — count your own cards.</li>
+          <li>Everyone except the round winner adds the points left in their hand to their score. First to win <b>3 rounds</b> wins the game.</li>
+        </ul>
+      </details>
+    </div>
+    <footer class="foot"><a href="https://demarioking.com/#game-zone">← DeMarioKing.com Game Zone</a></footer>
+  </section>
+
+  <!-- ============ LOBBY ============ -->
+  <section class="screen screen--lobby" id="lobby" hidden>
+    <header class="bar">
+      <span class="logo logo--small">TURK</span>
+      <div class="bar__music" id="music-slot-lobby"></div>
+    </header>
+    <div class="lobby">
+      <div class="lobby__code">
+        <span class="lobby__label">Room code</span>
+        <strong class="lobby__codeval" id="lobby-code"></strong>
+        <span class="badge" id="lobby-vis"></span>
+      </div>
+      <div class="lobby__invite">
+        <button class="btn btn--ghost" type="button" id="copy-link">Copy invite link</button>
+        <span class="lobby__copied" id="copied" aria-live="polite"></span>
+      </div>
+      <h2 class="lobby__title">Players <span id="lobby-count"></span></h2>
+      <ul class="lobby__players" id="lobby-players"></ul>
+      <p class="lobby__status" id="lobby-status" aria-live="polite"></p>
+      <div class="lobby__actions">
+        <button class="btn btn--gold btn--wide" type="button" id="ready-btn">I'm Ready</button>
+        <button class="btn btn--ghost" type="button" id="leave-lobby">Leave</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TABLE ============ -->
+  <section class="screen screen--table" id="table" hidden>
+    <header class="bar">
+      <span class="logo logo--small">TURK</span>
+      <span class="bar__round" id="round-label"></span>
+      <div class="bar__right">
+        <div class="bar__music" id="music-slot-table"></div>
+        <button class="icon-btn" type="button" id="score-btn" aria-label="Scoreboard" title="Scoreboard">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        </button>
+        <button class="icon-btn" type="button" id="leave-game" aria-label="Leave game" title="Leave game">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="felt">
+      <div class="opponents" id="opponents"></div>
+
+      <div class="center">
+        <div class="turn" id="turn" aria-live="polite">
+          <span class="turn__who" id="turn-who"></span>
+          <span class="turn__timer" id="turn-timer" aria-label="Seconds left"></span>
+        </div>
+        <div class="piles">
+          <button class="pile pile--stock" type="button" id="stock" aria-label="Draw from the deck">
+            <span class="card card--back"></span>
+            <span class="pile__count" id="stock-count"></span>
+          </button>
+          <button class="pile pile--discard" type="button" id="discard" aria-label="Take the top discard">
+            <span class="pile__slot" id="discard-top"></span>
+            <span class="pile__count" id="discard-count"></span>
+          </button>
+        </div>
+        <p class="hint" id="hint"></p>
+      </div>
+
+      <section class="spreads" id="spreads" aria-label="Spreads on the table"></section>
+      <ol class="feed" id="feed" aria-label="Recent moves"></ol>
+    </div>
+
+    <div class="me" id="me">
+      <div class="me__info">
+        <span class="avatar" id="me-avatar"></span>
+        <span class="me__name" id="me-name"></span>
+        <span class="me__stats" id="me-stats"></span>
+      </div>
+      <div class="hand" id="hand" role="group" aria-label="Your hand"></div>
+      <div class="actions">
+        <button class="btn btn--drop" type="button" id="drop-btn">DROP</button>
+        <button class="btn btn--gold" type="button" id="spread-btn">Lay Down</button>
+        <button class="btn btn--ghost" type="button" id="hit-btn">Add to Spread</button>
+        <button class="btn btn--red" type="button" id="discard-btn">Discard</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DIALOGS ============ -->
+  <dialog class="modal" id="drop-dialog">
+    <form method="dialog" class="modal__box">
+      <h2 class="modal__title">DROP?</h2>
+      <p>Dropping ends the round. Everyone reveals their cards and the <b>lowest hand wins</b>.</p>
+      <p>If anyone ties or beats you, you're <b>caught</b> and take a 10‑point penalty.</p>
+      <div class="modal__actions">
+        <button class="btn btn--ghost" value="cancel">Keep playing</button>
+        <button class="btn btn--drop" value="drop" id="drop-confirm">DROP</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal modal--wide" id="round-dialog">
+    <div class="modal__box">
+      <h2 class="modal__title" id="round-title"></h2>
+      <p class="round__sub" id="round-sub"></p>
+      <div class="round__table" id="round-table"></div>
+      <div class="modal__actions">
+        <button class="btn btn--ghost" type="button" id="round-leave" hidden>Leave</button>
+        <button class="btn btn--gold" type="button" id="round-next"></button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="score-dialog">
+    <div class="modal__box">
+      <h2 class="modal__title">Scoreboard</h2>
+      <div id="score-table"></div>
+      <div class="modal__actions"><button class="btn btn--gold" type="button" id="score-close">Close</button></div>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="leave-dialog">
+    <form method="dialog" class="modal__box">
+      <h2 class="modal__title">Leave the game?</h2>
+      <p>You'll give up your seat. The others keep playing.</p>
+      <div class="modal__actions">
+        <button class="btn btn--ghost" value="cancel">Stay</button>
+        <button class="btn btn--red" value="leave">Leave</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ============ ERROR / CONNECTING ============ -->
+  <section class="screen screen--error" id="error" hidden>
+    <h1 class="logo">TURK</h1>
+    <h2 id="error-title">The game server isn't answering</h2>
+    <p id="error-text">Check your connection and try again. If it keeps happening, the game may be down for a moment.</p>
+    <div class="modal__actions">
+      <button class="btn btn--gold" type="button" id="error-retry">Try again</button>
+      <a class="btn btn--ghost" href="/">Home</a>
+    </div>
+  </section>
+
+  <div class="banner" id="banner" hidden></div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

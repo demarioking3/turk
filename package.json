@@ -1,0 +1,11 @@
+{
+  "name": "turk",
+  "private": true,
+  "type": "module",
+  "description": "TURK multiplayer card game, served at turk.demarioking.com. Page: site/, game server: functions/.",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "test": "node --test test/rules.test.mjs test/server.test.mjs",
+    "local": "node test/local-server.mjs"
+  }
+}

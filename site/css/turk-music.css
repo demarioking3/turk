@@ -1,0 +1,92 @@
+/* TURK music control — black & gold. Scoped to .turk-music so it can't affect the game's own styles. */
+.turk-music {
+  --tm-gold: #d4a73c;
+  --tm-gold-hi: #f7e3a1;
+  --tm-gold-lo: #8a6417;
+  --tm-red: #b3212f;
+  --tm-ink: #0b0908;
+  position: fixed;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 9000;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
+  max-width: calc(100vw - 28px);
+  font: 600 13px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--tm-gold-hi);
+  -webkit-tap-highlight-color: transparent;
+}
+.turk-music--inline { position: static; max-width: none; }
+.turk-music [hidden] { display: none !important; }
+
+.turk-music__enable,
+.turk-music__controls {
+  background: linear-gradient(180deg, #1b1612, var(--tm-ink));
+  border: 1px solid var(--tm-gold);
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px #000, 0 8px 24px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(247, 227, 161, .18);
+}
+
+.turk-music__enable {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 0 18px 0 14px; cursor: pointer;
+  color: var(--tm-gold-hi); font: inherit; letter-spacing: .06em; text-transform: uppercase;
+  transition: transform .15s, box-shadow .15s;
+}
+.turk-music__enable:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px #000, 0 10px 28px rgba(0,0,0,.6), 0 0 18px rgba(212,167,60,.35); }
+
+.turk-music__controls { display: inline-flex; align-items: center; gap: 4px; padding: 4px 14px 4px 4px; min-height: 44px; }
+
+.turk-music__btn {
+  display: grid; place-items: center; width: 40px; height: 40px; flex: none;
+  border: 0; border-radius: 50%; background: transparent; color: var(--tm-gold-hi); cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.turk-music__btn:hover { background: rgba(212, 167, 60, .14); }
+.turk-music__btn--play[aria-pressed="false"] { background: linear-gradient(180deg, var(--tm-gold-hi), var(--tm-gold) 55%, var(--tm-gold-lo)); color: var(--tm-ink); }
+
+.turk-music svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.turk-music__btn--play svg path { fill: currentColor; stroke: none; } /* solid play/pause */
+
+.turk-music button:focus-visible,
+.turk-music__volume:focus-visible { outline: 2px solid var(--tm-gold-hi); outline-offset: 2px; }
+
+/* volume slider — gold fill up to the current value */
+.turk-music__volume {
+  -webkit-appearance: none; appearance: none;
+  width: 110px; height: 28px; margin: 0 0 0 4px; background: transparent; cursor: pointer;
+  --turk-fill: 60%;
+}
+.turk-music__volume::-webkit-slider-runnable-track {
+  height: 4px; border-radius: 4px;
+  background: linear-gradient(90deg, var(--tm-gold) var(--turk-fill), rgba(247, 227, 161, .22) var(--turk-fill));
+}
+.turk-music__volume::-moz-range-track { height: 4px; border-radius: 4px; background: rgba(247, 227, 161, .22); }
+.turk-music__volume::-moz-range-progress { height: 4px; border-radius: 4px; background: var(--tm-gold); }
+.turk-music__volume::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px; margin-top: -6px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--tm-gold-hi), var(--tm-gold) 60%, var(--tm-gold-lo));
+  border: 1px solid #000; box-shadow: 0 0 0 2px rgba(212, 167, 60, .25);
+}
+.turk-music__volume::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--tm-gold-hi), var(--tm-gold) 60%, var(--tm-gold-lo));
+  border: 1px solid #000;
+}
+
+.turk-music__status {
+  flex-basis: 100%; text-align: right; font-size: 12px; font-weight: 500;
+  color: rgba(247, 227, 161, .8); text-shadow: 0 1px 2px #000;
+}
+.turk-music.is-unavailable .turk-music__status {
+  flex-basis: auto; padding: 8px 14px; border: 1px dashed rgba(212, 167, 60, .5); border-radius: 999px; background: rgba(11, 9, 8, .85);
+}
+
+/* phones: smaller slider so the control stays out of the way of the cards */
+@media (max-width: 480px) {
+  .turk-music { right: max(10px, env(safe-area-inset-right)); bottom: max(10px, env(safe-area-inset-bottom)); }
+  .turk-music__volume { width: 76px; }
+  .turk-music__enable { padding: 0 14px 0 12px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .turk-music * { transition: none !important; }
+}
